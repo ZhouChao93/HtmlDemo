@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>分词编辑页面</title>
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>分词编辑页面</legend>
+</fieldset>
+<form class="layui-form" lay-filter="example" id="formData">
+    <input type="hidden" name="corpusId" value="" title="语料ID">
+    <input type="hidden" name="intentionsId" value="" title="意图ID">
+    <!--分词信息-->
+    <div class="layui-form-item" id="wordSynData">
+
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <span type="close" class="layui-btn layui-btn-normal" id="page_close">取消</span>
+            <span type="submit" class="layui-btn" lay-submit="" lay-filter="formData" id="submitForm">保存</span>
+        </div>
+    </div>
+</form>
+<input type="hidden" id="parentData">
+<!--分词信息模板-->
+<script id="wordSynTem" type="text/html">
+    {{# layui.each(d.list.synonymJson, function(index, item){ }}
+    <div class="layui-row" style="margin-top: 20px">
+        <div class="layui-col-sm9" style="margin-right: 10px">
+            <label class="layui-form-label">{{ item.word }}</label>
+            <div class="layui-input-block">
+                    <textarea placeholder="分词信息" name="corpusContent"  word="{{item.word}}"
+                              class="layui-textarea">{{ item.synonym }}</textarea>
+            </div>
+        </div>
+    </div>
+    {{# }); }}
+</script>
+<script src="../layui/layui.js"></script>
+<script>
+    var $;
+    layui.use(['form', 'layedit', 'laydate', 'laytpl', 'jquery'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , laytpl = layui.laytpl
+            , layedit = layui.layedit
+            , $ = layui.jquery;
+
+        //页面关闭
+        layui.$('#page_close').on('click', function () {
+            // $("#uids", window.parent.document).val("This is value");
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        });
+        //数据保存
+        form.on('submit(formData)', function (data) {
+                // var synonymJsonObject = window.parent.synonymJsonObject;
+                // console.log("父页面的数据",synonymJsonObject)
+                // console.log(data.elem);//被执行事件的元素DOM对象，一般为button对象
+                // console.log(data.form);//被执行提交的form对象，一般在存在form标签时才会返回
+                // console.log(data.field);//当前容器的全部表单字段，名值对形式：{name: value}
+                //js  获取name的值
+                var handleData = document.getElementById("parentData").value;
+                var handleJson = JSON.parse(handleData);
+                var  index = handleJson["index"];
+                var corpusContentDiv = document.getElementsByName('corpusContent');
+                var synonymJson = [];
+                for (var i = 0; i < corpusContentDiv.length; i++) {
+                    let word = $(corpusContentDiv[i]).attr("word");
+                    let synonym = corpusContentDiv[i].value;
+                    let synWord = {};
+                    synWord['word'] = word;
+                    synWord['synonym'] = synonym;
+                    synonymJson.push(synWord);
+                }
+                window.parent.synonymJsonObjectFu(index,synonymJson);
+                var frameIndex = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(frameIndex); //再执行关闭
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            }
+        );
+
+        //layui初始化完成 --- 进行数据回显
+        layer.ready(function () {
+            //通过中间变量获取父页面传递的数据
+            var data = document.getElementById("parentData").value;
+            // console.log("准备渲染模板", data);
+            /*渲染模版*/
+            //获取模板
+            var getTpl = wordSynTem.innerHTML;
+            //获取需要操作的dom
+            var view = document.getElementById('wordSynData');
+            // var data = {};
+            laytpl(getTpl).render(JSON.parse(data), function (html) {
+                view.innerHTML = html;
+            });
+            form.render();
+        });
+    });
+
+    /**
+     * 获取父页面传递过来的数据
+     * */
+    function handleParentData(data) {
+        // console.log("父页面传递过来的值", data);
+        document.getElementById("parentData").value = data;
+    }
+</script>
+</body>
+</html>

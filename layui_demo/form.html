@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>语料编辑页面</title>
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>语料编辑页面</legend>
+</fieldset>
+<form class="layui-form" lay-filter="example" id="formData">
+    <input type="hidden" name="corpusId" id="corpusId" value="" title="语料ID">
+    <input type="hidden" name="intentionsId" id="intentionsId" value="" title="意图ID">
+    <input type="hidden" name="intentionsName" id="intentionsName" value="" title="意图名称">
+    <div class="layui-form-item">
+        <div class="layui-row">
+            <div class="layui-col-sm6">
+                <label class="layui-form-label">语料信息</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入语料内容" name="corpusContent" id="corpusContent"
+                              class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-col-sm1">
+                <span type="button" id="getWordParticiple"  class="layui-btn layui-btn-sm"
+                      style="background: #1E9FFF;color: aliceblue">获取分词信息</span>
+            </div>
+        </div>
+    </div>
+    <!--语料的分词信息-->
+    <div class="layui-form-item" id="wordCheckedList">
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <span type="close" class="layui-btn layui-btn-normal" id="page_close">关闭</span>
+            <span type="submit" class="layui-btn" lay-submit="" lay-filter="formData" id="submitForm">立即提交</span>
+        </div>
+    </div>
+
+</form>
+<!--语料的分词信息-->
+<script id="checkboxTem" type="text/html">
+    <label class="layui-form-label">分词信息</label>
+    <div class="layui-input-block">
+        {{# layui.each(d.corpusSegmentationSet, function(index, item){ }}
+        <input  id="{{ getSynId(item.num,index)}}" type="checkbox"      segId="{{item.segId}}" name="word"  num="{{ item.num }}"  {{  item.checked=="1"?'checked':''  }}
+               title="{{ item.segWord }}" value="{{ item.segWord }}"> <span type="button"
+                                                                            class="layui-btn layui-btn-sm"
+                                                                            onclick="wordInfo({{item.num,index}})">添加同义词</span><br/>
+        {{# }); }}
+    </div>
+</script>
+<script src="../layui/layui.js"></script>
+<script>
+    var getWordSynInfo ="";
+    var $;
+    var layer;
+    var synonymJsonObject ={};
+    var corpusContentJsonObject ={};
+    var form;
+    var laytpl;
+    layui.use(['form', 'layedit', 'laydate', 'laytpl', 'jquery'], function () {
+         form = layui.form;
+         laytpl = layui.laytpl;
+        $ = layui.jquery;
+        layer = layui.layer;
+        //页面关闭
+        layui.$('#page_close').on('click', function () {
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        });
+
+        //获取分词信息
+        $("#getWordParticiple").click(function () {
+            // 获取语料信息
+            let corpusContent = $("#corpusContent").val();
+            // 调用jieba分词接口获取分词信息
+            let handleAjax1 = handleAjax(corpusContent);
+
+            $.ajax({
+                url:"intentionCorpus_analysisOfTheCorpus.action",
+                data:{'id':id},
+                type:"Post",
+                dataType:"json",
+                success:function(data){
+                    console.log(data);
+                    layer.msg(data.msg);
+                    location.reload(); //删除成功后再刷新
+                },
+                error:function(data){
+                    $.messager.alert('错误',data.msg);
+                }
+            });
+
+
+
+            //处理语料的分词信息
+            var data = [
+                {
+                    "checked": 1,
+                    "corpusId": "sffsd",
+                    "details": null,
+                    "segId": "2",
+                    "segWord": "电费",
+                    "num": "0",
+                    "synonymJson": [
+                        {
+                            "word": "电费",
+                            "synonym": "电量额度/电费额度"
+                        },
+                        {
+                            "word": "电量",
+                            "synonym": "电费"
+                        }
+                    ]
+                },
+                {
+                    "checked": 1,
+                    "corpusId": "sffsd",
+                    "details": null,
+                    "segId": "1",
+                    "segWord": "查询",
+                    "num": "1",
+                    "synonymJson": [
+                        {
+                            "word": "查看",
+                            "synonym": "查询/查一下"
+                        },
+                        {
+                            "word": "查询",
+                            "synonym": "查看/询问"
+                        }
+                    ]
+                },
+                {
+                    "checked": 0,
+                    "corpusId": "sffsd",
+                    "details": null,
+                    "segId": "1",
+                    "segWord": "帮",
+                    "num": "2",
+                    "synonymJson": [
+                        {
+                            "word": "帮",
+                            "synonym": "帮忙"
+                        }
+                    ]
+                }
+            ];
+            updateWordCheckedInfo(data);
+        });
+
+        form.on('submit(formData)', function (data) {
+            /*意图ID*/
+            let intentionsId = $("#intentionsId").val;
+            /*语料ID*/
+            let corpusId = $("#corpusId").val;
+            /*语料内容*/
+            let corpusContent = $("#intentionsId").val;
+            /*获取分词信息*/
+            var wordSegInfo = getWordSegInfo();
+            getCheckBoxData(corpusId);
+
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        //layui初始化完成 --- 进行数据回显
+        layer.ready(function () {
+            debugger
+            //通过中间变量获取父页面传递的数据
+            let corpusSegmentationSet = corpusContentJsonObject['corpusSegmentationSet'];
+            for (let vn  in corpusSegmentationSet){
+                 let dataVo = corpusSegmentationSet[vn];
+                 let synId = getSynId(dataVo.num,vn);
+                 synonymJsonObject[synId]=dataVo;
+            }
+            renderingFromData(corpusContentJsonObject);
+            updateWordCheckedInfo(corpusContentJsonObject);
+            form.render();
+        });
+
+
+        /**
+         *  获取分词信息的数据
+         *  */
+        function getCheckBoxData() {
+            let wordList = [];
+            //获取分词信息
+            let obj = document.getElementsByName("word");
+            for (let i = 0; i < obj.length; i++) {
+                //分词ID
+                let segId = $(obj[i]).attr("segId");
+                let wordInfo = {};
+                /*分词ID*/
+                wordInfo.segId = segId;
+                /*语料ID*/
+                wordInfo.corpusId = corpusId;
+                /*分词内容*/
+                wordInfo.seqWord = obj[i].value;
+                /*同义词列表*/
+                wordInfo.synonymJson = "";
+                /*是否勾选*/
+                if (obj[i].checked) {
+                    wordInfo.checked = "1";
+                } else {
+                    wordInfo.checked = "0";
+                }
+                wordList.push(wordInfo);
+            }
+            console.log("语料的分词信息", wordList);
+            return wordList;
+        }
+
+        // 渲染语料的分词信息模板
+        function updateWordCheckedInfo(data) {
+            //渲染模版
+            var getTpl = checkboxTem.innerHTML;
+            var view = document.getElementById('wordCheckedList');
+            laytpl(getTpl).render(data, function (html) {
+                view.innerHTML = html;
+            });
+            form.render();
+        }
+        
+        function renderingFromData(data) {
+            console.log("需要回显的数据")
+            var s = JSON.stringify(data);
+            form.val("example", JSON.parse(s));
+        }
+        
+    });
+
+    /**
+     * 获取父页面的值
+     **/
+    function child(data) {
+        console.log("父页面的值", data);
+        corpusContentJsonObject = data;
+        // document.getElementById("segmentationWordData").value = JSON.stringify(data);
+    }
+    /* 获取同义词的下标*/
+    function getSynId(num,index) {
+        if(num==null||num===''){
+            return "syn_"+index;
+        }else {
+            return "syn_"+num;
+        }
+    }
+
+    //子页面更新分词相关信息
+    function synonymJsonObjectFu(index,data) {
+        synonymJsonObject[index]["synonymJson"]=data;
+    }
+
+
+    //打开同义词管理界面
+    function wordInfo(num,index) {
+        var synId = getSynId(num,index);
+        var synonymJson =  synonymJsonObject[synId];
+        console.log("打开同义词管理页面并传递数据",synonymJson)
+        layer.open({
+            type: 2,
+            content: './wordInfo.html',
+            area: ['1200px', '800px'],
+            maxmin: true,
+            success: function (layero, index) {
+                var iframe = window['layui-layer-iframe' + index];
+                // //调用子页面的全局函数
+                var updateData= {};
+                updateData.index=synId;
+                updateData.list= synonymJson;
+                iframe.handleParentData(JSON.stringify(updateData))
+            },
+            cancel: function () {
+                // 右上角关闭事件的逻辑
+                console.log("关闭子页面")
+            },
+            close: function () {
+                console.log("关闭页面")
+            },
+            end: function () {
+                console.log("关闭页面-end");
+            }
+        });
+    }
+</script>
+</body>
+</html>
