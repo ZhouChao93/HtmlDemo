@@ -5,7 +5,7 @@
     <title>拍照2</title>
 </head>
 
-<body>
+<body id="demoAll">
 <button id="take">拍照</button>
 <br />
 <video id="v" style="width: 640px;height: 480px;"></video>
@@ -60,6 +60,8 @@
         document.getElementById('take').addEventListener('click', function () {
             if (videoPlaying) {
                 let canvas = document.getElementById('canvas');
+                //来源
+                // let v = document.getElementById('demoAll');
                 canvas.width = v.videoWidth;
                 canvas.height = v.videoHeight;
                 canvas.getContext('2d').drawImage(v, 0, 0);
