@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代码生成</title>
+    <!--引入资源文件-->
+    <link rel="stylesheet" href="../staticResourceFile/layui/css/layui.css" media="all">
+    <!--引入资源文件-->
+    <script src="../staticResourceFile/layui/layui.js"></script>
+</head>
+<body>
+<form class="layui-form" action="codeFactory/createDBFileBySQL" lay-filter="example">
+    <div class="layui-form-item">
+        <label class="layui-form-label">ip</label>
+        <div class="layui-input-block">
+            <input type="text" name="ip" value="127.0.0.1" autocomplete="off" placeholder="ip" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">端口</label>
+        <div class="layui-input-block">
+            <input type="text" name="port" value="3306" autocomplete="off" placeholder="端口" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">数据库名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="dataBase" autocomplete="off" placeholder="数据库名称" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-block">
+            <input type="text" name="userName" value="root" autocomplete="off" placeholder="用户名" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="text" name="passWord" value="root" autocomplete="off" placeholder="密码" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">sql语句</label>
+        <div class="layui-input-block">
+            <input type="text" name="sql" autocomplete="off" placeholder="sql语句" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">模型名称</label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline">
+                <select name="modelName">
+                    <option value="">模型名称</option>
+                    <option value="entity.ftl">entity</option>
+                    <option value="hbm.ftl">hbm</option>
+                    <option value="listUI.ftl">listUI</option>
+                    <option value="mybatis.ftl">mybatis</option>
+                    <option value="search_list.ftl">search_list</option>
+                    <option value="view.ftl">view</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <!--            <span type="submit" class="layui-btn" lay-submit  lay-filter="demo1">立即提交</span>-->
+            <button class="layui-btn" lay-submit lay-filter="demo1">代码生成器</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+    <button type="button" class="layui-btn layui-btn-normal" id="LAY-component-form-setval">赋值</button>
+
+    <pre class="layui-code" id="pre" lay-skin="notepad">
+        demo  代码
+try {
+			//设置编码格式  否则PrintWriter的编码格式会成为本地化的编码格式
+			response.setCharacterEncoding("UTF-8");
+			PrintWriter writer = response.getWriter();
+			//加载模板
+			Template temp = TemplateUtil.getTemplate(vo.getModelName());
+			SqlResult sql = zdbService.findSQL(vo);
+			List<FieldInfo> fieldInfo = sql.getFieldInfo();
+			Map<String, Object> data = new HashMap<>(2);
+			data.put("fieldList",fieldInfo);
+			data.put("tableName","Permission");
+			//创建文件 以及创建输出流
+			temp.process(data, writer);
+			writer.flush();
+			writer.close();
+		} catch (IOException | TemplateException e) {
+			logger.error("依据SQL,执行并返回结果",e);
+		}
+    </pre>
+</form>
+<script>
+    layui.use(['form', 'layedit', 'laydate', 'jquery', 'code'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate
+            , code = layui.code()
+            , $ = layui.jquery;
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            debugger
+            console.log("表单数据", data.field);
+            // JSON.parse(data.field)
+            $.ajax({
+                url: 'http://127.0.0.1:8099/codeFactory/createTemplateBySql'
+                , contentType: 'application/json'
+                , type: "POST"
+                , data: JSON.stringify(data.field)
+                // , dataType: 'json'
+                , success: function (data) {
+                    alert("DDD")
+                    console.log("---", data)
+                    // layer.alert(data);
+                    // $("#pre").innerText = data;
+                    $("#pre").html(data);
+                    layui.code();
+
+                }
+            });
+
+
+            return false;
+        });
+
+        //表单赋值
+        layui.$('#LAY-component-form-setval').on('click', function () {
+            form.val('example', {
+                "name": "贤心" // "name": "value"
+                , "namea": "123456"
+            });
+        });
+
+        //表单取值
+        layui.$('#LAY-component-form-getval').on('click', function () {
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+
+
+    });
+
+    /**
+     * 文件下载
+     * @param content
+     * @param filename
+     */
+    function downFile(content, filename) {
+        // 创建隐藏的可下载链接
+        var eleLink = document.createElement('a');
+        eleLink.download = filename;
+        eleLink.style.display = 'none';
+        // 字符内容转变成blob地址
+        var blob = new Blob([content]);
+        eleLink.href = URL.createObjectURL(blob);
+        // 触发点击
+        document.body.appendChild(eleLink);
+        eleLink.click();
+        // 然后移除
+        document.body.removeChild(eleLink);
+    }
+
+</script>
+</body>
+</html>
