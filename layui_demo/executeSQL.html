@@ -105,16 +105,18 @@
             , $ = layui.jquery;
         //监听提交
         form.on('submit(demo1)', function (data) {
-            debugger
+            // debugger
             console.log("表单数据", data.field);
             // JSON.parse(data.field)
             $.ajax({
                 url: 'http://127.0.0.1:8099/codeFactory/createTemplateBySql'
-                // , contentType: 'application/json'
+                , contentType: 'application/json;charset=utf-8'
+                // , contentType: 'application/x-www-form-urlencoded'
                 , type: "POST"
+                  ,  'processData': false
                 // , data: JSON.stringify(data.field)
                 , data: data.field
-                // , dataType: 'json'
+                , dataType: 'json'
                 , success: function (data) {
                     alert("DDD")
                     console.log("---", data)
