@@ -8,13 +8,13 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
     <legend>流程测试</legend>
     <form class="layui-form" lay-filter="example" id="formData"><br/>
-        url: <input type="text" name="url" id="url"><br/>
-        请求唯一标识符: <input type="text" name="reqId" id="reqId"><br/>
-        请求状态: <input type="text" name="flowState" id="flowState"><br/>
-        节点处理结果: <input type="text" name="resultType" id="resultType"><br/>
-        流程代码: <input type="text" name="flowCode" id="flowCode"><br/>
+        url: <input type="text" name="url" id="url" value="http://127.0.0.1:8090/flowInfoIvrHandle_doFlow.action"><br/>
+        请求唯一标识符: <input type="text" name="reqId" id="reqId" value="101"><br/>
+        请求状态: <input type="text" name="flowState" id="flowState" value="running"><br/>
+        节点处理结果: <input type="text" name="resultType" id="resultType" value="0"><br/>
+        流程代码: <input type="text" name="flowCode" id="flowCode" value="995"><br/>
         业务数据: <input type="text" name="resultData" id="resultData"><br/>
-        主叫号码: <input type="text" name="callPhone" id="callPhone"><br/>
+        主叫号码: <input type="text" name="callPhone" id="callPhone" value="8001"><br/>
         <input type="button" value="发起请求" title="发起请求" onclick="doAjax()">
     </form>
 </fieldset>

@@ -19,20 +19,13 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
     <legend>方框风格的表单集合</legend>
 </fieldset>
-<form class="layui-form layui-form-pane" action="">
+<form class="layui-form layui-form-pane" action="" lay-filter="form_search_data">
     <div class="layui-form-item">
         <label class="layui-form-label">长输入框</label>
         <div class="layui-input-block">
             <input type="text" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">短输入框</label>
-        <div class="layui-input-inline">
-            <input type="text" name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
-        </div>
-    </div>
-
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">日期选择</label>
@@ -46,14 +39,16 @@
                 <input type="text" name="number" autocomplete="off" class="layui-input">
             </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">密码</label>
-        <div class="layui-input-inline">
-            <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        <div class="layui-inline">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="number" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">请务必填写用户名</div>
         </div>
-        <div class="layui-form-mid layui-word-aux">请务必填写用户名</div>
+
     </div>
+
 
     <div class="layui-form-item">
         <div class="layui-inline">
@@ -111,28 +106,17 @@
             </select>
         </div>
     </div>
-    <div class="layui-form-item" pane="">
-        <label class="layui-form-label">开关-开</label>
-        <div class="layui-input-block">
-            <input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest" title="开关">
+    <div class="layui-row">
+        <div class="layui-col-md4">
+        <div class="layui-form-item" pane="">
+                <label class="layui-form-label">单选框</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="男" title="男" checked="">
+                    <input type="radio" name="sex" value="女" title="女">
+                    <input type="radio" name="sex" value="禁" title="禁用" disabled="">
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item" pane="">
-        <label class="layui-form-label">单选框</label>
-        <div class="layui-input-block">
-            <input type="radio" name="sex" value="男" title="男" checked="">
-            <input type="radio" name="sex" value="女" title="女">
-            <input type="radio" name="sex" value="禁" title="禁用" disabled="">
-        </div>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">文本域</label>
-        <div class="layui-input-block">
-            <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <button class="layui-btn" lay-submit="" lay-filter="demo2">跳转式提交</button>
     </div>
 </form>
 <div class="layui-btn-container">
@@ -140,9 +124,6 @@
     <button type="button" class="layui-btn" lay-active="e2" value="2">按钮二</button>
     <button type="button" class="layui-btn" lay-active="e3" value="3">按钮三</button>
 </div>
-
-
-<table id="table_data" lay-filter="tableData"></table>
 <form class="layui-form" action="" lay-filter="form_data" id="form_data" style="display: none">
     <div class="layui-form-item">
         <label class="layui-form-label">输入框</label>
@@ -162,18 +143,9 @@
     <div class="layui-form-item">
         <label class="layui-form-label">选择框</label>
         <div class="layui-input-block">
-            <!--            <select name="city" lay-verify="required">-->
-            <!--                <option value=""></option>-->
-            <!--                <option value="0">北京</option>-->
-            <!--                <option value="1">上海</option>-->
-            <!--                <option value="2">广州</option>-->
-            <!--                <option value="3">深圳</option>-->
-            <!--                <option value="4">杭州</option>-->
-            <!--            </select>-->
             <select name="city" lay-verify="required" id="deptId">
 
             </select>
-
         </div>
     </div>
     <div class="layui-form-item">
@@ -210,6 +182,10 @@
         </div>
     </div>
 </form>
+<!--主列表-->
+<table id="table_data" lay-filter="tableData"></table>
+<!--二级列表-->
+<table id="table_data_info" lay-filter="tableDataInfo"></table>
 <!--引入资源文件-->
 <script src="../staticResourceFile/layui/layui.js"></script>
 <script>
@@ -220,7 +196,7 @@
         let $ = layui.$; //重点处
         let form = layui.form;
         //第一个实例
-        let table_obj = table.render({
+        let table_first = table.render({
             elem: '#table_data'
             , url: url //数据接口
             , method: "POST"
@@ -234,7 +210,7 @@
                 // , icon: 'layui-icon-tips'
                 , icon: 'layui-icon-engine'
                 // , color:'#1E9FFF'
-                , style:'color:red'
+                , style: 'color:red'
             }]
             , request: {
                 pageName: 'curr' //页码的参数名称，默认：page
@@ -389,11 +365,16 @@
         util.event('lay-active', {
             e1: function () {
                 console.log("this", this)
+                //获取 class=layui-form lay-filter=XX的表单的数据 此处,form_search_data和 form_data的值
+                let form_search_data = form.val("form_search_data");
+                let form_data = form.val("form_data");
+                console.log("form表单数据form_search_data",form_search_data);
+                console.log("form表单数据form_data",form_data);
                 alert('触发了事件1');
             }
             , e2: function () {
                 // table.reload(ID, options);
-                table_obj.reload();
+                table_first.reload();
                 alert('触发了事件2');
             }
             , e3: function () {
@@ -405,14 +386,12 @@
         /*
         * form 表单  的lay-submit  lay-filter="form_btn"
         * */
-        form.on('submit(form_btn)', function(data){//submit(form_btn)中的 form_btn 号为事件过滤器的值， <button lay-submit lay-filter="*">提交</button>
+        form.on('submit(form_btn)', function (data) {//submit(form_btn)中的 form_btn 号为事件过滤器的值， <button lay-submit lay-filter="*">提交</button>
             console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
             console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
             console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
-
-
 
 
         /**
@@ -454,6 +433,67 @@
             form.render();
         }
 
+        /* 二级表单
+        *  ============================================================================================================================================================
+        * */
+
+        /*二级表单*/
+        let table_two_info = table.render({
+            elem: '#table_data_info'/*table id的值*/
+            , url: url //数据接口
+            , method: "POST"
+            , contentType: 'application/json'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , page: true //开启分页
+            , where: {name: "张三", title: "标题"}
+            , defaultToolbar: ['filter', 'exports', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                // , icon: 'layui-icon-tips'
+                , icon: 'layui-icon-engine'
+                // , color:'#1E9FFF'
+                , style: 'color:red'
+            }]
+            , request: {
+                pageName: 'curr' //页码的参数名称，默认：page
+                , limitName: 'nums' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusName: 'code' //规定数据状态的字段名称，默认：code
+                , statusCode: "1" //规定成功的状态码，默认：0
+                , msgName: 'msg' //规定状态信息的字段名称，默认：msg
+                , countName: 'count' //规定数据总数的字段名称，默认：count
+                , dataName: 'data' //规定数据列表的字段名称，默认：data
+            }
+            // response  和 parseData 使用一个就可以了
+            // , parseData: function (res) { //res 即为原始返回的数据
+            //     return {
+            //         "code": res.code, //解析接口状态
+            //         "msg": res.msg, //解析提示文本
+            //         // "data": res.data //解析数据列表
+            //     };
+            // }
+            , cols: [[ //表头
+                {type: 'checkbox', fixed: 'left'}
+                , {field: "id", title: '主键'}
+                , {field: 'title', title: '标题'}
+                , {field: 'corpusSegmentationSet', title: '分词信息', templet: '#checkboxTem'}//进行数据进行特殊处理
+                , {field: 'wealth', title: '操作', toolbar: '#barDemo'}
+            ]]
+            , done: function (res, curr, count) {
+                //接口返回值
+                console.log("接口返回值", res);
+
+                form_select_done('deptId', res.data, 'title', 'id');
+
+                //得到当前页码
+                console.log("当前页码", curr);
+
+                //得到数据总量
+                console.log("数据总量", count);
+            }
+
+        });
 
     });
 
