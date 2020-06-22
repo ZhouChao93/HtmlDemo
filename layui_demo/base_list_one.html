@@ -17,7 +17,7 @@
     </div>
 </script>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
-    <legend>方框风格的表单集合</legend>
+    <legend>方框风格的表单集合(搜索区域)</legend>
 </fieldset>
 <form class="layui-form layui-form-pane" action="" lay-filter="form_search_data">
     <div class="layui-form-item">
@@ -119,11 +119,12 @@
         </div>
     </div>
 </form>
-<div class="layui-btn-container">
+<div class="layui-btn-container"><!--lay-active="e1"  中的e1 ,e2 ,e3可以自定义-->
     <button type="button" class="layui-btn" lay-active="e1" value="1">按钮一</button>
     <button type="button" class="layui-btn" lay-active="e2" value="2">按钮二</button>
     <button type="button" class="layui-btn" lay-active="e3" value="3">按钮三</button>
 </div>
+<!--数据新增和编辑表单页面-->
 <form class="layui-form" action="" lay-filter="form_data" id="form_data" style="display: none">
     <div class="layui-form-item">
         <label class="layui-form-label">输入框</label>
@@ -151,9 +152,9 @@
     <div class="layui-form-item">
         <label class="layui-form-label">复选框</label>
         <div class="layui-input-block" id="div_checkbox">
-            <input type="checkbox" name="like" title="写作">
-            <input type="checkbox" name="like" title="阅读" checked>
-            <input type="checkbox" name="like" title="发呆">
+<!--            <input type="checkbox" name="like" title="写作">-->
+<!--            <input type="checkbox" name="like" title="阅读" checked>-->
+<!--            <input type="checkbox" name="like" title="发呆">-->
         </div>
     </div>
     <div class="layui-form-item">
@@ -184,18 +185,16 @@
 </form>
 <!--主列表-->
 <table id="table_data" lay-filter="tableData"></table>
-<!--二级列表-->
-<table id="table_data_info" lay-filter="tableDataInfo"></table>
 <!--引入资源文件-->
 <script src="../staticResourceFile/layui/layui.js"></script>
 <script>
-    let url = 'http://127.0.0.1:8080/system/findAll';
+    let url = 'http://127.0.0.1:8080/baseTable/findAll';
     layui.use(['table', 'form', 'util', 'jquery'], function () {
         let table = layui.table;
         let util = layui.util;
         let $ = layui.$; //重点处
         let form = layui.form;
-        //固定块
+        //右下角固定块
         util.fixbar({
             bar1: true
             ,bar2: true
@@ -217,34 +216,33 @@
             , contentType: 'application/json'
             , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
             , page: true //开启分页
-            , where: {name: "张三", title: "标题"}
+            , where: {name: "张三", title: "标题"}/*搜索参数*/
             , defaultToolbar: ['filter', 'exports', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
                 title: '提示'
-                , layEvent: 'LAYTABLE_TIPS'
-                // , icon: 'layui-icon-tips'
-                , icon: 'layui-icon-engine'
-                // , color:'#1E9FFF'
-                , style: 'color:red'
+                , layEvent: 'LAYTABLE_TIPS'/*按钮事件名称*/
+                , icon: 'layui-icon-engine'/*图标*/
             }]
             , request: {
                 pageName: 'curr' //页码的参数名称，默认：page
                 , limitName: 'nums' //每页数据量的参数名，默认：limit
             }
-            , response: {
-                statusName: 'code' //规定数据状态的字段名称，默认：code
-                , statusCode: "1" //规定成功的状态码，默认：0
-                , msgName: 'msg' //规定状态信息的字段名称，默认：msg
-                , countName: 'count' //规定数据总数的字段名称，默认：count
-                , dataName: 'data' //规定数据列表的字段名称，默认：data
-            }
-            // response  和 parseData 使用一个就可以了
-            // , parseData: function (res) { //res 即为原始返回的数据
-            //     return {
-            //         "code": res.code, //解析接口状态
-            //         "msg": res.msg, //解析提示文本
-            //         // "data": res.data //解析数据列表
-            //     };
+            // , response: {
+            //     statusName: 'code' //规定数据状态的字段名称，默认：code
+            //     , statusCode: "1" //规定成功的状态码，默认：0
+            //     , msgName: 'msg' //规定状态信息的字段名称，默认：msg
+            //     , countName: 'count' //规定数据总数的字段名称，默认：count
+            //     , dataName: 'data' //规定数据列表的字段名称，默认：data
             // }
+            // response  和 parseData 使用一个就可以了
+            , parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": 0, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "data": res.data.list, //解析数据列表
+                    "count":res.data.count
+
+                };
+            }
             , cols: [[ //表头
                 {type: 'checkbox', fixed: 'left'}
                 ,{field: 'id', title: ' 序号',type:'numbers'}//序号
@@ -256,12 +254,8 @@
             , done: function (res, curr, count) {
                 //接口返回值
                 console.log("接口返回值", res);
-
-                form_select_done('deptId', res.data, 'title', 'id');
-
                 //得到当前页码
                 console.log("当前页码", curr);
-
                 //得到数据总量
                 console.log("数据总量", count);
             }
@@ -294,6 +288,25 @@
                             // var iframe = window['layui-layer-iframe' + index];
                             //调用子页面的全局函数
                             // iframe.child(data)
+                            console.log("打开编辑页面")
+                            let data = [];
+                            let data_1 = {};
+                            let data_2 = {};
+                            data_1['title'] = '标题1';
+                            data_1['id'] = '1';
+                            data_2['title'] = '标题2';
+                            data_2['id'] = '2';
+                            data.push(data_1);
+                            data.push(data_2);
+                            /*初始化select*/
+                            form_select_done('deptId', data, 'title', 'id','true');
+                            /*选中select指定的值*/
+                            form_select_checked("deptId",2);
+                            /*初始化 checkBox*/
+                            checkbox_done('div_checkbox', data, 'title', 'id',"checkbox_name",'false');
+                            let values = [1];
+                            /*选中指定的checkbox的值*/
+                            checkbox_checked('checkbox_name',values);
                         },
                         cancel: function () {
                             // 右上角关闭事件的逻辑
@@ -399,6 +412,7 @@
 
 
         /*
+        * form 表单提交时在此进行监听
         * form 表单  的lay-submit  lay-filter="form_btn"
         * */
         form.on('submit(form_btn)', function (data) {//submit(form_btn)中的 form_btn 号为事件过滤器的值， <button lay-submit lay-filter="*">提交</button>
@@ -410,28 +424,49 @@
 
 
         /**
+         * 向容器div_id 中添加select类型的数据
          * @param div_id  容器ID
          * @param data  数组对象
          * @param name name的key
          * @param value value的key
+         * @param append true 追加  false清空后重新添加
          * */
-        function form_select_done(div_id, data, name, value) {
+        function form_select_done(div_id, data, name, value,append) {
+            if('false'===append){
+                $('#' + div_id).empty();
+            }
             $.each(data, function (index, item) {
                 $('#' + div_id).append(new Option(item[name], item[value]));
             });
             form.render();
         }
 
+        /**
+         * 向容器div_id 选中check_value的值
+         * @param div_id  容器ID
+         * */
+        function form_select_checked(div_id,check_value) {
+            $("#"+div_id).find("option[value="+check_value+"]").attr("selected",true);
+        }
+
+
+
 
         /**
+         * 向容器ID为div_id 中添加数据
          * @param div_id 容器ID
          * @param data  数组对象
          * @param name  name的key
          * @param value value的key
+         * @param checkboxName checkbox的name值
+         * @param append true 追加  false清空后重新添加
          * */
-        function checkbox_done(div_id, data, name, value) {
+        function checkbox_done(div_id, data, name, value,checkboxName,append) {
+            if('false'===append){
+                $('#' + div_id).empty();
+            }
             $.each(data, function (index, item) {
-                $("#div_checkbox").append("<input type='checkbox' title=" + item[name] + " name='header' value=" + item[value] + "  />");
+                $("#"+div_id).append("<input type='checkbox' title=" + item[name] + " name="+checkboxName+" value=" + item[value] + "  />");
             });
             form.render();
         }
@@ -447,69 +482,6 @@
             }
             form.render();
         }
-
-        /* 二级表单
-        *  ============================================================================================================================================================
-        * */
-
-        /*二级表单*/
-        let table_two_info = table.render({
-            elem: '#table_data_info'/*table id的值*/
-            , url: url //数据接口
-            , method: "POST"
-            , contentType: 'application/json'
-            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
-            , page: true //开启分页
-            , where: {name: "张三", title: "标题"}
-            , defaultToolbar: ['filter', 'exports', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
-                title: '提示'
-                , layEvent: 'LAYTABLE_TIPS'
-                // , icon: 'layui-icon-tips'
-                , icon: 'layui-icon-engine'
-                // , color:'#1E9FFF'
-                , style: 'color:red'
-            }]
-            , request: {
-                pageName: 'curr' //页码的参数名称，默认：page
-                , limitName: 'nums' //每页数据量的参数名，默认：limit
-            }
-            , response: {
-                statusName: 'code' //规定数据状态的字段名称，默认：code
-                , statusCode: "1" //规定成功的状态码，默认：0
-                , msgName: 'msg' //规定状态信息的字段名称，默认：msg
-                , countName: 'count' //规定数据总数的字段名称，默认：count
-                , dataName: 'data' //规定数据列表的字段名称，默认：data
-            }
-            // response  和 parseData 使用一个就可以了
-            // , parseData: function (res) { //res 即为原始返回的数据
-            //     return {
-            //         "code": res.code, //解析接口状态
-            //         "msg": res.msg, //解析提示文本
-            //         // "data": res.data //解析数据列表
-            //     };
-            // }
-            , cols: [[ //表头
-                {type: 'checkbox', fixed: 'left'}
-                , {field: "id", title: '主键'}
-                , {field: 'title', title: '标题'}
-                , {field: 'corpusSegmentationSet', title: '分词信息', templet: '#checkboxTem'}//进行数据进行特殊处理
-                , {field: 'wealth', title: '操作', toolbar: '#barDemo'}
-            ]]
-            , done: function (res, curr, count) {
-                //接口返回值
-                console.log("接口返回值", res);
-
-                form_select_done('deptId', res.data, 'title', 'id');
-
-                //得到当前页码
-                console.log("当前页码", curr);
-
-                //得到数据总量
-                console.log("数据总量", count);
-            }
-
-        });
-
     });
 
 </script>
