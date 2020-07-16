@@ -108,7 +108,7 @@
     </div>
     <div class="layui-row">
         <div class="layui-col-md4">
-        <div class="layui-form-item" pane="">
+            <div class="layui-form-item" pane="">
                 <label class="layui-form-label">单选框</label>
                 <div class="layui-input-block">
                     <input type="radio" name="sex" value="男" title="男" checked="">
@@ -152,9 +152,9 @@
     <div class="layui-form-item">
         <label class="layui-form-label">复选框</label>
         <div class="layui-input-block" id="div_checkbox">
-<!--            <input type="checkbox" name="like" title="写作">-->
-<!--            <input type="checkbox" name="like" title="阅读" checked>-->
-<!--            <input type="checkbox" name="like" title="发呆">-->
+            <!--            <input type="checkbox" name="like" title="写作">-->
+            <!--            <input type="checkbox" name="like" title="阅读" checked>-->
+            <!--            <input type="checkbox" name="like" title="发呆">-->
         </div>
     </div>
     <div class="layui-form-item">
@@ -187,7 +187,7 @@
 <table id="table_data" lay-filter="tableData"></table>
 <!--引入资源文件-->
 <script src="../staticResourceFile/layui/layui.js"></script>
-<script>
+<script type="text/javascript">
     let url = 'http://127.0.0.1:8080/baseTable/findAll';
     layui.use(['table', 'form', 'util', 'jquery'], function () {
         let table = layui.table;
@@ -197,13 +197,13 @@
         //右下角固定块
         util.fixbar({
             bar1: true
-            ,bar2: true
-            ,css: {right: 50, bottom: 100}
-            ,bgcolor: '#393D49'
-            ,click: function(type){
-                if(type === 'bar1'){
+            , bar2: true
+            , css: {right: 50, bottom: 100}
+            , bgcolor: '#393D49'
+            , click: function (type) {
+                if (type === 'bar1') {
                     layer.msg('icon 是可以随便换的')
-                } else if(type === 'bar2') {
+                } else if (type === 'bar2') {
                     layer.msg('两个 bar 都可以设定是否开启')
                 }
             }
@@ -239,13 +239,13 @@
                     "code": 0, //解析接口状态
                     "msg": res.msg, //解析提示文本
                     "data": res.data.list, //解析数据列表
-                    "count":res.data.count
+                    "count": res.data.count
 
                 };
             }
             , cols: [[ //表头
                 {type: 'checkbox', fixed: 'left'}
-                ,{field: 'id', title: ' 序号',type:'numbers'}//序号
+                , {field: 'id', title: ' 序号', type: 'numbers'}//序号
                 , {field: "id", title: '主键'}
                 , {field: 'title', title: '标题'}
                 , {field: 'corpusSegmentationSet', title: '分词信息', templet: '#checkboxTem'}//进行数据进行特殊处理
@@ -299,14 +299,14 @@
                             data.push(data_1);
                             data.push(data_2);
                             /*初始化select*/
-                            form_select_done('deptId', data, 'title', 'id','true');
+                            form_select_done('deptId', data, 'title', 'id', 'true');
                             /*选中select指定的值*/
-                            form_select_checked("deptId",2);
+                            form_select_checked("deptId", 2);
                             /*初始化 checkBox*/
-                            checkbox_done('div_checkbox', data, 'title', 'id',"checkbox_name",'false');
+                            checkbox_done('div_checkbox', data, 'title', 'id', "checkbox_name", 'false');
                             let values = [1];
                             /*选中指定的checkbox的值*/
-                            checkbox_checked('checkbox_name',values);
+                            checkbox_checked('checkbox_name', values);
                         },
                         cancel: function () {
                             // 右上角关闭事件的逻辑
@@ -396,8 +396,8 @@
                 //获取 class=layui-form lay-filter=XX的表单的数据 此处,form_search_data和 form_data的值
                 let form_search_data = form.val("form_search_data");
                 let form_data = form.val("form_data");
-                console.log("form表单数据form_search_data",form_search_data);
-                console.log("form表单数据form_data",form_data);
+                console.log("form表单数据form_search_data", form_search_data);
+                console.log("form表单数据form_data", form_data);
                 alert('触发了事件1');
             }
             , e2: function () {
@@ -416,6 +416,8 @@
         * form 表单  的lay-submit  lay-filter="form_btn"
         * */
         form.on('submit(form_btn)', function (data) {//submit(form_btn)中的 form_btn 号为事件过滤器的值， <button lay-submit lay-filter="*">提交</button>
+
+
             console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
             console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
             console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
@@ -431,8 +433,8 @@
          * @param value value的key
          * @param append true 追加  false清空后重新添加
          * */
-        function form_select_done(div_id, data, name, value,append) {
-            if('false'===append){
+        function form_select_done(div_id, data, name, value, append) {
+            if ('false' === append) {
                 $('#' + div_id).empty();
             }
             $.each(data, function (index, item) {
@@ -444,12 +446,11 @@
         /**
          * 向容器div_id 选中check_value的值
          * @param div_id  容器ID
+         * @param check_value 需要选中的值
          * */
-        function form_select_checked(div_id,check_value) {
-            $("#"+div_id).find("option[value="+check_value+"]").attr("selected",true);
+        function form_select_checked(div_id, check_value) {
+            $("#" + div_id).find("option[value=" + check_value + "]").attr("selected", true);
         }
-
-
 
 
         /**
@@ -461,12 +462,12 @@
          * @param checkboxName checkbox的name值
          * @param append true 追加  false清空后重新添加
          * */
-        function checkbox_done(div_id, data, name, value,checkboxName,append) {
-            if('false'===append){
+        function checkbox_done(div_id, data, name, value, checkboxName, append) {
+            if ('false' === append) {
                 $('#' + div_id).empty();
             }
             $.each(data, function (index, item) {
-                $("#"+div_id).append("<input type='checkbox' title=" + item[name] + " name="+checkboxName+" value=" + item[value] + "  />");
+                $("#" + div_id).append("<input type='checkbox' title=" + item[name] + " name=" + checkboxName + " value=" + item[value] + "  />");
             });
             form.render();
         }
