@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>table模块快速使用</title>
+</head>
+<body>
+<input type="hidden" value="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCQ0TzG3hf2pOswStyNG6NCinDO+Dtsi3bwb9/j
+s5ZwjUM8CS95ki4SBbNzuvLFBeSy109DdOYJECp1VLs24eojrcGG9BUOWx4sVj3XqmmETNZCxgD6
+xMu9CGNH+TciPs8Kisy2N87XdvZfe9isr2eS2Obz+qBppK+qEdeDFbGdfwIDAQAB" id="publicKeyString">
+<!--引入资源文件-->
+<script src="../staticResourceFile/base64.min.js"></script>
+<script src="../staticResourceFile/jsencrypt.min.js"></script>
+<script src="../staticResourceFile/md5.js"></script>
+<script>
+
+    var encrypt = new JSEncrypt();
+    let value = document.getElementById("publicKeyString").value;
+    encrypt.setPublicKey(value);
+    encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----' + value + '-----END PUBLIC KEY-----');
+    var d = encrypt.encrypt('123');
+    console.log("加密后的字符串", d);
+    console.log("BASE64编码",window.btoa(d))
+    // window.btoa('china is so nb') // 编码
+    // window.atob("Y2hpbmEgaXMgc28gbmI=") // 解码
+    // Base64.encode('china is so nb'); // 编码
+    // "Y2hpbmEgaXMgc28gbmI="
+    // Base64.decode("Y2hpbmEgaXMgc28gbmI="); // 解码
+    // 'china is so nb'
+    // let s = md5("123"+"123");
+    // console.log(s)
+</script>
+RSA公钥Base64编码:MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrcj/0eGqjfTTFEHCW7dUKN8K4ovs+r1IcsYWR
+CY8V/9Vz5KrMT3Foe0qAYZCZdayc/FsUZWMrc9BD0i6mPZZ7KSPKkWiKmkFLtS/43LiX/u3glKEo
+NHtcZcgzKFzj3y1s/mZBmGaNUJ6YeeFOE3k9jLWV854WEY3/Ju3n9yHDuwIDAQAB
+RSA私钥Base64编码:MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAKtyP/R4aqN9NMUQcJbt1Qo3wrii
++z6vUhyxhZEJjxX/1XPkqsxPcWh7SoBhkJl1rJz8WxRlYytz0EPSLqY9lnspI8qRaIqaQUu1L/jc
+uJf+7eCUoSg0e1xlyDMoXOPfLWz+ZkGYZo1Qnph54U4TeT2MtZXznhYRjf8m7ef3IcO7AgMBAAEC
+gYBGbmH9oXZVgXsrNay7JCsvzmZtCW9jegymgvsW8TFZ3UaoHJlZ44z4WiXqBaqskF4AA9+6ykfq
+MuKs6eyGGKj3dCTQUWuBsWnp1iPLQEJNDo11oj9wkoSK1SpNFFqGgvdyt3SbsBH+PS8Nu2gR6K8w
+qgtyWA+UmQbxbDTqGwHHSQJBAO0aPo0nlByFq5knPG16N0/OHIC6+F5FNzA/2mK0x1q6HhsZ5TVW
+YjbP7GSgnwivDpAXymjRnv7em0cDtRVrFnUCQQC5HGELh4255cZQhm0we05G3e0291eS14zsE9EK
+RkTqLH26aIFGHM1mwfNTmjklugjdVQDJFxnzEsnrZeSlTAtvAkEAvhpmwMJVDLFYLom494YgRwpY
+7BX9AYi5gSQRM0cC+Al2DgCrOCK0yIHZZa0rFclWAc4xae14b52IHl4omK2t6QJBAJ/3iVnIU87R
+ZVbTRGrAND4DrOpyRyirw6mD2oMxhH6F4kUD6KtpWouxkhCuVzJmGSEEQ0CECTXJB9u4WyYJmFsC
+QF6IkiV8d4k5gLEv/E8YStk9um0qiC/aTKvClmRp6Th5RpbZ8vMsERvkTlcvRkCXb/TqyI0ulXuR
+IPlvckNVNaQ=
+公钥加密并Base64编码的结果：MrpO9YjVY3yEcPb48Gx4PRmn7NPAWOJdzg+9ED9LWc95eoDab+JYVK5dm6bHUZnYXpfrkFWW6uE4
+Ujkr8pIu3jCEVkZzoTu4S0zhz5WUbcMC28jQuMtrGvQZ5pdcUpSz+/KFEYKRj00rHU8VkPXkG2OC
+0vzSIMCYNAOHFbgA3QM=
+解密后的明文: hello, i am infi, good night!
+
+Process finished with exit code 0
+
+</body>
+</html>
