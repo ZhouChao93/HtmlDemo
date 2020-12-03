@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  ${comments}
+  @author ${author}
+  @date ${datetime}
+-->
+<mapper namespace="${package}.${moduleName}.dao.${className}Dao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="${package}.${moduleName}.entity.${className}" id="${classname}Map">
+        #foreach($column in $columns)
+        <!-- $column.comments -->
+        <result property="${column.attrname}" column="${column.columnName}" jdbcType="${column.jdbcType}"/>
+        #end
+    </resultMap>
+
+    <!--表字段信息-->
+    <sql id="Base_Column_List">
+        #foreach($column in $columns)
+        <!-- $column.comments -->
+        ${column.columnName} #if($velocityCount != $columns.size()),
+        #end
+        #end
+    </sql>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="${classname}Map">
+        select
+        <include refid="Base_Column_List"/>
+
+        from ${tableName}
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="${classname}Map">
+        select
+        <include refid="Base_Column_List"/>
+
+        from ${tableName}
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="${classname}Map">
+        select
+        <include refid="Base_Column_List"/>
+
+        from ${tableName}
+        <where>
+            #foreach($column in $columns)
+            <!-- $column.comments -->
+            <if test="${column.attrname} != null and ${column.attrname} != ''">
+                and ${column.columnName} = #{${column.attrname}}
+            </if>
+            #end
+
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into ${tableName}(#foreach($column in $columns)${column.columnName}#if($velocityCount != $columns.size()),#end #end)
+        values (#foreach($column in $columns)#{${column.attrname}}#if($velocityCount != $columns.size()),#end #end)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update ${tableName}
+        <set>
+            #foreach($column in $columns)
+            <!-- $column.comments -->
+            <if test="${column.attrname} != null">
+                ${column.columnName} = #{${column.attrname}},
+            </if>
+            #end
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from ${tableName} where id = #{id}
+    </delete>
+
+
+
+
+</mapper>
