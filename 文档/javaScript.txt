@@ -1,7 +1,0 @@
-##json
-        var mm = "hhh";
-        var nn = "hnnh";
-        var json = {};
-        json[mm] = "1";
-        json[nn] = "fdsfds1";
-        console.log(json);
