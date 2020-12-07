@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="../data/jquery.js"></script>
+<script>
+    $(function () {
+        var skuConfig = {};
+        $.getJSON("../data/sku.json", function (data) {
+            // console.log("sku Data", data)
+            $.each(data, function (index, infoData) {
+                let pro = data[index];
+                // console.log("商品信息", pro)
+                //获取sku数组
+                let skuArray = pro['skus'];
+                //遍历sku数组
+                $.each(skuArray, function (infoIndex, sku) {
+                    // console.log("sku", sku)
+                    let skuAttributes = sku['attributes'];
+                    $.each(skuAttributes, function (infoIndex, sku) {
+                        let skuName = sku['name'];//颜色，尺寸
+                        let skuValue = sku['value'];//白色，小,大
+                        if (skuConfig[skuName]) {
+                            let skuValues = skuConfig[skuName];
+                            skuValues.push(skuValue);
+                        }else {
+                            let skuValues=[];
+                            skuValues.push(skuValue);
+                            skuConfig[skuName] = skuValues;
+                        }
+                    })
+                })
+            })
+            console.log("全部的sku信息", skuConfig);
+            //进行数据重组
+            let arr = [];
+            for (let k in skuConfig){
+                console.log(k)
+                let skuData = {};
+                skuData['name'] = k;
+                let itemInfo = [];
+                $.each(skuConfig[k], function (infoIndex, sku) {
+
+                    let item = {};
+                    item['name'] =sku;
+                    itemInfo.push(item);
+                })
+                skuData['item'] = itemInfo;
+                arr.push(skuData);
+            }
+            console.log("组装后的数据",arr);
+        })
+
+
+
+    })
+</script>
+</body>
+</html>
