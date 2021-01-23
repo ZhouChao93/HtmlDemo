@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>富文本编辑器</title>
+</head>
+<script></script>
+<body>
+<textarea id="editor_id" name="content" style="width:700px;height:300px;">
+&lt;strong&gt;HTML内容&lt;/strong&gt;
+</textarea>
+</body>
+<script charset="utf-8" src="../staticResourceFile/kindeditor-4.1.7/kindeditor-all.js"></script>
+<script charset="utf-8" src="../staticResourceFile/kindeditor-4.1.7/lang/zh_CN.js"></script>
+<script>
+    KindEditor.ready(function(K) {
+        editor = K.create('#editor_id', {
+            allowFileManager : true,
+            // items:['fontname', 'fontsize', 'forecolor', 'hilitecolor', 'bold',
+            //     'italic', 'underline', 'removeformat', 'justifyleft', 'justifycenter', 'justifyright',
+            //     'insertorderedlist', 'insertunorderedlist', 'emoticons', 'image', 'multiimage', 'insertfile'
+            // ],
+            uploadJson: "http://127.0.0.1:8011/file/upload",
+            allowImageRemote: false,
+            afterUpload: function(url, data, name) {
+                alert(url);
+                alert(data);
+                alert(name);//如果是单张图片，则 name="image"
+            }
+        });
+    });
+</script>
+</html>
