@@ -1,0 +1,15 @@
+{
+  "name": "family-help-manager",
+  "version": "1.0.0",
+  "description": "家庭助手",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zhouchao",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^16.0.4"
+  }
+}
