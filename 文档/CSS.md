@@ -1,5 +1,6 @@
-在线帮助文档
-https://www.cnblogs.com/Ry-yuan/p/6848197.html
+#布局
+##display布局
+> 参考文章 https://www.cnblogs.com/Ry-yuan/p/6848197.html
 ##布局
 inline:
 使元素变成行内元素，拥有行内元素的特性，即可以与其他行内元素共享一行，不会独占一行.
@@ -12,6 +13,5 @@ block:
 inline-block:
 结合了inline与block的一些特点，结合了上述inline的第1个特点和block的第2,3个特点.
 用通俗的话讲，就是不独占一行的块级元素。
-
 ##清除浮动
- clear: both;
+clear: both;
