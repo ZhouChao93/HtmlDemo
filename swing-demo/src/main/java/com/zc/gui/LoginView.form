@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.zc.gui.LoginView">
+  <grid id="27dc6" binding="panel" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties>
+      <background color="-1581076"/>
+    </properties>
+    <border type="empty"/>
+    <children>
+      <grid id="8302d" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="West"/>
+        <properties>
+          <background color="-14106853"/>
+        </properties>
+        <border type="empty">
+          <size top="0" left="20" bottom="20" right="0"/>
+        </border>
+        <children/>
+      </grid>
+      <grid id="7f95a" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="South"/>
+        <properties>
+          <background color="-14106853"/>
+        </properties>
+        <border type="empty">
+          <size top="0" left="0" bottom="20" right="0"/>
+        </border>
+        <children/>
+      </grid>
+      <grid id="2f385" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="East"/>
+        <properties>
+          <background color="-14106853"/>
+          <enabled value="true"/>
+        </properties>
+        <border type="empty">
+          <size top="0" left="20" bottom="0" right="0"/>
+        </border>
+        <children/>
+      </grid>
+      <grid id="e06e3" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="North"/>
+        <properties>
+          <background color="-14106853"/>
+        </properties>
+        <border type="empty">
+          <size top="0" left="0" bottom="20" right="0"/>
+        </border>
+        <children/>
+      </grid>
+      <grid id="20fa4" binding="panel1" custom-create="true" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints border-constraint="Center"/>
+        <properties>
+          <background color="-5657154"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="37647" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints/>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>
