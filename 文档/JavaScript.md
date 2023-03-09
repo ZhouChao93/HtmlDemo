@@ -28,3 +28,16 @@
 某个元素的上边界距文档最上边距离：obj.offset().top;
 某个元素的左边界距文档最左边距离：obj.offset().left;
 ```
+
+
+![img.png](images/img.png)
+
+
+```plantuml
+@startuml
+a-> b
+@enduml
+
+
+
+```
